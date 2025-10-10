@@ -20,7 +20,7 @@ import requests
 import torch
 import torch.nn as nn
 from PIL import Image
-# from torch.cuda import amp
+from torch.cuda import amp
 
 # Import 'ultralytics' package or install if missing
 try:
@@ -889,13 +889,10 @@ class AutoShape(nn.Module):
             x = np.ascontiguousarray(np.array(x).transpose((0, 3, 1, 2)))  # stack and BHWC to BCHW
             x = torch.from_numpy(x).to(p.device).type_as(p) / 255  # uint8 to fp16/32
 
-        # with amp.autocast(autocast):
+        with amp.autocast(autocast):
             # Inference
-            # with dt[1]:
-            #     y = self.model(x, augment=augment)  # forward
-        with torch.amp.autocast('cuda', enabled=autocast):
             with dt[1]:
-                y = self.model(x, augment=augment)
+                y = self.model(x, augment=augment)  # forward
 
             # Post-process
             with dt[2]:
