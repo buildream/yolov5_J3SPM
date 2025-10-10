@@ -38,6 +38,15 @@ import yaml
 from torch.optim import lr_scheduler
 from tqdm import tqdm
 
+## added parts to solve compatibility pytorch 2.6 problem
+from torch.serialization import add_safe_globals, safe_globals  # NEW
+from models.yolo import Model as YoloV5Model                    # NEW
+
+# YOLOv5 모델 클래스를 허용 목록에 등록
+add_safe_globals([YoloV5Model])
+##################################################
+
+
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
@@ -212,7 +221,11 @@ def train(hyp, opt, device, callbacks):
     if pretrained:
         with torch_distributed_zero_first(LOCAL_RANK):
             weights = attempt_download(weights)  # download if not found locally
-        ckpt = torch.load(weights, map_location="cpu")  # load checkpoint to CPU to avoid CUDA memory leak
+
+        ## ckpt = torch.load(weights, map_location="cpu")  # load checkpoint to CPU to avoid CUDA memory leak
+        ## To solve compatibility problem (pytorch 2.6)
+        ckpt = torch.load(weights, map_location="cpu", weights_only=False)
+
         model = Model(cfg or ckpt["model"].yaml, ch=3, nc=nc, anchors=hyp.get("anchors")).to(device)  # create
         exclude = ["anchor"] if (cfg or hyp.get("anchors")) and not resume else []  # exclude keys
         csd = ckpt["model"].float().state_dict()  # checkpoint state_dict as FP32
