@@ -40,13 +40,29 @@ import torchvision
 import yaml
 
 # Import 'ultralytics' package or install if missing
+# try:
+#     import ultralytics
+
+#     assert hasattr(ultralytics, "__version__")  # verify package is not directory
+# except (ImportError, AssertionError):
+#     os.system("pip install -U ultralytics")
+#     import ultralytics
+
 try:
     import ultralytics
 
-    assert hasattr(ultralytics, "__version__")  # verify package is not directory
-except (ImportError, AssertionError):
-    os.system("pip install -U ultralytics")
-    import ultralytics
+    if not hasattr(ultralytics, "__version__"):
+        raise ImportError(
+            "Imported 'ultralytics' has no __version__. "
+            "A local file or folder may be shadowing the installed package."
+        )
+
+except (ImportError, AssertionError) as exc:
+    raise ImportError(
+        "Failed to import the fixed J3SPM AI Ultralytics environment. "
+        "Automatic package installation is disabled. "
+        "Expected ultralytics==8.2.85."
+    ) from exc
 
 from ultralytics.utils.checks import check_requirements
 
