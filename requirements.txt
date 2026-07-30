@@ -4,7 +4,8 @@
 # Base ------------------------------------------------------------------------
 gitpython>=3.1.30
 matplotlib>=3.3
-numpy>=1.23.5
+numpy=1.26.4
+#numpy>=1.23.5
 opencv-python>=4.1.1
 pillow>=10.3.0
 psutil  # system resources
@@ -39,7 +40,8 @@ seaborn>=0.11.0
 # openvino-dev>=2023.0  # OpenVINO export
 
 # Deploy ----------------------------------------------------------------------
-setuptools>=70.0.0 # Snyk vulnerability fix
+#setuptools>=70.0.0 # Snyk vulnerability fix
+setuptools=80.10.2 # Snyk vulnerability fix
 # tritonclient[all]~=2.24.0
 
 # Extras ----------------------------------------------------------------------
